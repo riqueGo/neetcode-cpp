@@ -11,7 +11,6 @@ class Solution {
     private:
         unordered_map<int,unordered_set<char>> rows;
         unordered_map<int,unordered_set<char>> columns;
-        unordered_map<int,unordered_set<char>> subBox;
 
         bool isValidSubSudoku(vector<vector<char>>& board, int row, int column){
             unordered_set<char> boardValues;
@@ -39,6 +38,29 @@ class Solution {
             for(int i = 0; i < 9; i+=3){
                 for(int j = 0; j < 9; j+=3){
                     if(!isValidSubSudoku(board, i, j)) return false;
+                }
+            }
+            return true;
+        }
+
+        bool isValidSudokuBoolMap(vector<vector<char>>& board) {
+            bool rows[9][9] = {false};
+            bool columns[9][9] = {false};
+            bool subBox[9][9] = {false};
+            
+            for(int r = 0; r < 9; r++){
+                for(int c = 0; c < 9; c++){
+                    if(board[r][c] == '.') continue;
+                    
+                    int value = board[r][c] - '0' - 1; //char to num idx
+                    int area = (r/3) * 3 + (c/3);
+                    
+                    //if number already exists
+                    if(rows[r][value] || columns[c][value] || subBox[area][value]) return false;
+                    
+                    rows[r][value] = true;
+                    columns[c][value] = true;
+                    subBox[area][value] = true;
                 }
             }
             return true;
@@ -86,5 +108,5 @@ int main() {
     };
 
     Solution solution;
-    std::cout << solution.isValidSudoku(board) << std::endl;
+    std::cout << solution.isValidSudokuBoolMap(board) << std::endl;
 }
