@@ -10,53 +10,60 @@ public:
     Node(T val) : data(val), next(nullptr) {}
 };
 
-// Stack class using the Node class
 template <typename T>
 class Stack {
-private:
-    Node<T>* top;
+    private:
+        Node<T>* _top;
+        int _size;
+    
+    public:
+        Stack() : _top(nullptr), _size(0) {}
 
-public:
-    Stack() : top(nullptr) {}
+        bool isEmpty() const { return _top == nullptr; }
 
-    // Check if the stack is empty
-    bool isEmpty() const {
-        return top == nullptr;
-    }
+        int size() const { return _size; }
 
-    // Push an element onto the stack
-    void push(T value) {
-        Node<T>* newNode = new Node<T>(value);
-        newNode->next = top;
-        top = newNode;
-    }
-
-    // Pop (remove and return) the top element from the stack
-    T pop() {
-        if (isEmpty()) {
-            throw std::runtime_error("Stack is empty");
+        T top() const { 
+            if(isEmpty()){
+                throw std::runtime_error("Stack is empty");
+            }
+            return _top->data;
         }
-        T value = top->data;
-        Node<T>* temp = top;
-        top = top->next;
-        delete temp;
-        return value;
-    }
 
-    // Peek (view) the top element of the stack without removing it
-    T peek() const {
-        if (isEmpty()) {
-            throw std::runtime_error("Stack is empty");
-        }
-        return top->data;
-    }
+        void push(T value) {
+            Node<T>* newNode = new Node<T>(value);
 
-    // Destructor to release memory
-    ~Stack() {
-        while (!isEmpty()) {
-            pop();
+            if(isEmpty()){
+                _top = newNode;
+            } else {
+                newNode->next = _top;
+                _top = newNode;
+            }
+
+            _size++;
         }
-    }
+
+        T pop() {
+            if(isEmpty()){
+                throw std::runtime_error("Stack is empty");
+            }
+
+            Node<T>* temp = _top;
+            _top = _top->next;
+            T value = temp->data;
+
+            _size--;
+
+            delete temp;
+            return value;
+        }
+
+        ~Stack() {
+            while(!isEmpty()){
+                pop();
+            }
+        }
+
 };
 
 int main() {
@@ -66,7 +73,7 @@ int main() {
     myStack.push(2);
     myStack.push(3);
 
-    std::cout << "Top element: " << myStack.peek() << std::endl;
+    std::cout << "Top element: " << myStack.top() << std::endl;
 
     while (!myStack.isEmpty()) {
         std::cout << "Popped: " << myStack.pop() << std::endl;

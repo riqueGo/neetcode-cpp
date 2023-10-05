@@ -9,92 +9,95 @@ class Node {
         Node(T val) : data(val), next(nullptr) {}
 };
 
-template <typename T>
+template<typename T>
 class Queue {
     private:
-        Node<T>* front;
-        Node<T>* rear;
+        Node<T>* _front;
+        Node<T>* _back;
+        int _size;
 
     public:
-        Queue() : front(nullptr), rear(nullptr) {}
-    
-    bool isEmpty() const { return front == nullptr; }
+        Queue() : _front(nullptr), _back(nullptr), _size(0) {}
 
-    //Enqueue an element to the rear of the queue
-    void enqueue(T value) {
-        Node<T>* newNode = new Node<T>(value);
+        bool isEmpty() const { return _front == nullptr; }
 
-        if(isEmpty()) {
-            front = rear = newNode;
-        } else {
-            rear->next = newNode;
-            rear = newNode;
-        }
-    }
+        int size() const { return _size; }
 
-    //dequeue an element from the front of the queue
-    T dequeue() {
-        if(isEmpty()) {
-            throw std::runtime_error("Queue is empty");
+        T front() {
+            if(isEmpty()){ throw std::runtime_error("Queue is empty"); }
+            return _front->data;
         }
 
-        T value = front->data;
-        Node<T>* temp = front;
-        front = front->next;
-        delete temp;
-
-        if (front == nullptr) {
-            rear = nullptr;
+        T back() {
+            if(isEmpty()){ throw std::runtime_error("Queue is empty"); }
+            return _back->data;
         }
 
-        return value;
-    }
+        void push_back(T value) {
+            Node<T>* newNode = new Node<T>(value);
 
-    //Get the front element without removing it
-    T peek() const {
-        if(isEmpty()) {
-            throw std::runtime_error("Queue is empty");
-        }
-        return front->data;
-    }
+            if(isEmpty()){
+                _front = _back = newNode;
+            } else {
+                _back->next = newNode;
+                _back = newNode;
+            }
 
-    void print() const {
-        if(isEmpty()) {
-            std::cout << "[]" << std::endl;
-            return;
+            _size++;
         }
 
-        std::cout << "[" << front->data;
+        T pop_front() {
+            if(isEmpty()) { throw std::runtime_error("Queue is Empty"); }
 
-        Node<T>* curr = front->next;
-        while(curr != nullptr) {
-            std::cout << "," << curr->data;
-            curr = curr->next;
-        }
-        std::cout << "]" << std::endl;
-    }
+            Node<T>* temp = _front;
+            _front = _front->next;
 
-    //Destructor to release memory
-    ~Queue() {
-        while(!isEmpty()) {
-            dequeue();
+            if(isEmpty()) {
+                _back = nullptr;
+            }
+
+            T val = temp->data;
+            _size--;
+
+            delete temp;
+            return val;
         }
-    }
+        void print() const {
+            if(isEmpty()) {
+                std::cout << "[]" << std::endl;
+                return;
+            }
+
+            std::cout << "[" << _front->data;
+
+            Node<T>* curr = _front->next;
+            while(curr != nullptr) {
+                std::cout << "," << curr->data;
+                curr = curr->next;
+            }
+            std::cout << "]" << std::endl;
+        }
+
+        ~Queue() {
+            while(!isEmpty()) {
+                pop_front();
+            }
+        }
 };
 
 int main() {
     Queue<int> myQueue;
 
-    myQueue.enqueue(1);
-    myQueue.enqueue(2);
-    myQueue.enqueue(3);
+    myQueue.push_back(1);
+    myQueue.push_back(2);
+    myQueue.push_back(3);
 
-    std::cout << "Front element: " << myQueue.peek() << std::endl;
+    std::cout << "Front element: " << myQueue.front() << std::endl;
 
     myQueue.print();
 
     while(!myQueue.isEmpty()){
-        std::cout << "Dequeue: " << myQueue.dequeue() << std::endl;
+        std::cout << "Dequeue: " << myQueue.pop_front() << std::endl;
     }
 
     myQueue.print();
