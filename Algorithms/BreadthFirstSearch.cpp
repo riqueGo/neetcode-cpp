@@ -8,55 +8,114 @@ using std::vector;
 using std::array;
 
 class Graph {
-public:
-    Graph() {}
+private:
+    int vertices;
+    vector<int>* graph;
+    int* visitedVertice;
+    queue<int> q;
 
-    void addEdgeUndirected(vector <int> adj[], int from, int to) {
-        adj[from].push_back(to);
-        adj[to].push_back(from);
+    void initVisitedVertices() {
+        visitedVertice = new int[vertices];
+        std::fill(visitedVertice, visitedVertice + vertices, 0);
     }
 
-    vector<int> bfsWalk(int node, int n, vector <int> adj[]) {
-        int visitedArray[n] = {0};
-        visitedArray[node] = 1;
+    void dfsWalk(int node, vector<int>& result) {
+        visitedVertice[node] = 1;
+        result.push_back(node);
 
-        queue<int> visitedQueue;
-        visitedQueue.push(node);
+        for(auto& v : graph[node]) {
+            if(!visitedVertice[v]) {
+                dfsWalk(v, result);
+            }
+        }
+    }
 
-        vector<int> bfs;
+public:
+    Graph(int n) {
+        vertices = n;
+        graph = new vector<int>[n];
+    }
 
-        while (!visitedQueue.empty()) {
-            int currNode = visitedQueue.front();
-            visitedQueue.pop();
+    ~Graph() {
+        delete[] graph;
+    }
 
-            bfs.push_back(currNode);
+    void printGraph() const {
+        for(int i = 0; i < vertices; i++) {
+            std::cout << i << " --> ";
+            for(auto& v : graph[i]){
+                std::cout << v << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
 
-            for(auto& edge : adj[currNode]) {
-                if(visitedArray[edge]) continue;
+    void addEdgeUndirected(int from, int to) {
+        graph[from].push_back(to);
+        graph[to].push_back(from);
+    }
 
-                visitedArray[edge] = 1;
-                visitedQueue.push(edge);
+    vector<int> bfs(int node) {
+        initVisitedVertices();
+        visitedVertice[node] = 1;
+        q.push(node);
+
+        vector<int> result;
+
+        while(!q.empty()){
+            int currNode = q.front();
+            q.pop();
+
+            result.push_back(currNode);
+
+            for(auto& v : graph[currNode]){
+                if(visitedVertice[v]) continue;
+
+                visitedVertice[v] = 1;
+                q.push(v);
             }
         }
 
-        return bfs;
+        delete[] visitedVertice;
+        return result;
+    }
+
+    vector<int> dfs(int node) {
+        initVisitedVertices();
+        vector<int> dfs;
+        dfsWalk(node, dfs);
+        delete[] visitedVertice;
+        return dfs;
     }
 };
 
 int main() {
-    Graph graph;
-    vector <int> adj[5];
+    Graph graph(10);
 
-    graph.addEdgeUndirected(adj, 0, 4);
-    graph.addEdgeUndirected(adj, 0, 1);
-    graph.addEdgeUndirected(adj, 1, 2);
-    graph.addEdgeUndirected(adj, 1, 4);
-    graph.addEdgeUndirected(adj, 2, 4);
-    graph.addEdgeUndirected(adj, 2, 3);
-    graph.addEdgeUndirected(adj, 3, 4);
+    graph.addEdgeUndirected(0, 1);
+    graph.addEdgeUndirected(0, 6);
+    graph.addEdgeUndirected(1, 2);
+    graph.addEdgeUndirected(1, 5);
+    graph.addEdgeUndirected(2, 3);
+    graph.addEdgeUndirected(2, 4);
+    graph.addEdgeUndirected(6, 7);
+    graph.addEdgeUndirected(6, 9);
+    graph.addEdgeUndirected(7, 8);
 
-    vector<int> result = graph.bfsWalk(0, 5, adj);
-    for (int i = 0; i < result.size(); i++) {
-        std::cout << result[i] << " ";
+
+    graph.printGraph();
+
+    vector<int> bfs = graph.bfs(0);
+    std::cout << "bfs: ";
+    for (int i = 0; i < bfs.size(); i++) {
+        std::cout << bfs[i] << " ";
+    }
+
+    std::cout << std::endl;
+
+    vector<int> dfs = graph.dfs(0);
+    std::cout << "dfs: ";
+    for (int i = 0; i < dfs.size(); i++) {
+        std::cout << dfs[i] << " ";
     }
 }
