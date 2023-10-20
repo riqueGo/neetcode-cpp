@@ -18,7 +18,6 @@ public:
 
     vector<int> bfsWalk(int node, int n, vector <int> adj[]) {
         int visitedArray[n] = {0};
-        visitedArray[0] = 1;
         visitedArray[node] = 1;
 
         queue<int> visitedQueue;
@@ -46,17 +45,17 @@ public:
 
 int main() {
     Graph graph;
-    vector <int> adj[6];
+    vector <int> adj[5];
 
-    graph.addEdgeUndirected(adj, 1, 5);
+    graph.addEdgeUndirected(adj, 0, 4);
+    graph.addEdgeUndirected(adj, 0, 1);
     graph.addEdgeUndirected(adj, 1, 2);
+    graph.addEdgeUndirected(adj, 1, 4);
+    graph.addEdgeUndirected(adj, 2, 4);
     graph.addEdgeUndirected(adj, 2, 3);
-    graph.addEdgeUndirected(adj, 2, 5);
-    graph.addEdgeUndirected(adj, 3, 5);
     graph.addEdgeUndirected(adj, 3, 4);
-    graph.addEdgeUndirected(adj, 4, 5);
 
-    vector<int> result = graph.bfsWalk(1, 6, adj);
+    vector<int> result = graph.bfsWalk(0, 5, adj);
     for (int i = 0; i < result.size(); i++) {
         std::cout << result[i] << " ";
     }
