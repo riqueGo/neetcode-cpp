@@ -9,30 +9,19 @@ using std::array;
 
 class Graph {
 private:
-    int vertices;
+    int vertex;
     vector<int>* graph;
     int* visitedVertice;
     queue<int> q;
 
     void initVisitedVertices() {
-        visitedVertice = new int[vertices];
-        std::fill(visitedVertice, visitedVertice + vertices, 0);
-    }
-
-    void dfsWalk(int node, vector<int>& result) {
-        visitedVertice[node] = 1;
-        result.push_back(node);
-
-        for(auto& v : graph[node]) {
-            if(!visitedVertice[v]) {
-                dfsWalk(v, result);
-            }
-        }
+        visitedVertice = new int[vertex];
+        std::fill(visitedVertice, visitedVertice + vertex, 0);
     }
 
 public:
     Graph(int n) {
-        vertices = n;
+        vertex = n;
         graph = new vector<int>[n];
     }
 
@@ -41,7 +30,7 @@ public:
     }
 
     void printGraph() const {
-        for(int i = 0; i < vertices; i++) {
+        for(int i = 0; i < vertex; i++) {
             std::cout << i << " --> ";
             for(auto& v : graph[i]){
                 std::cout << v << " ";
@@ -79,14 +68,6 @@ public:
         delete[] visitedVertice;
         return result;
     }
-
-    vector<int> dfs(int node) {
-        initVisitedVertices();
-        vector<int> dfs;
-        dfsWalk(node, dfs);
-        delete[] visitedVertice;
-        return dfs;
-    }
 };
 
 int main() {
@@ -109,13 +90,5 @@ int main() {
     std::cout << "bfs: ";
     for (int i = 0; i < bfs.size(); i++) {
         std::cout << bfs[i] << " ";
-    }
-
-    std::cout << std::endl;
-
-    vector<int> dfs = graph.dfs(0);
-    std::cout << "dfs: ";
-    for (int i = 0; i < dfs.size(); i++) {
-        std::cout << dfs[i] << " ";
     }
 }
